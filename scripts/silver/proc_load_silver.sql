@@ -172,6 +172,19 @@ BEGIN
     v_end_time := NOW();
     RAISE NOTICE '>> Load Duration: %', v_end_time - v_start_time;
 
+	v_start_time := NOW();
+    TRUNCATE TABLE silver.erp_px_cat_g1v2;
+    INSERT INTO silver.erp_px_cat_g1v2 (id, cat, subcat, maintenance)
+    SELECT
+        id, 
+		cat,
+		subcat,
+		maintenance
+    FROM bronze.erp_px_cat_g1v2;
+    
+    v_end_time := NOW();
+    RAISE NOTICE '>> Load Duration: %', v_end_time - v_start_time;
+
     -- Final Batch Logging
     v_batch_end_time := NOW();
     RAISE NOTICE '==========================================';
