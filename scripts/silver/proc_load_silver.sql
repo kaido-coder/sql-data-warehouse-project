@@ -157,6 +157,21 @@ BEGIN
     v_end_time := NOW();
     RAISE NOTICE '>> Load Duration: %', v_end_time - v_start_time;
 
+    v_start_time := NOW();
+    TRUNCATE TABLE silver.erp_loc_a101;
+    INSERT INTO silver.erp_loc_a101 (cid, cntry)
+    SELECT
+        REPLACE(TRIM(cid), '-', ''),
+		CASE WHEN cntry = 'DE' THEN 'Germany'
+			 WHEN cntry IN ('US', 'USA') THEN 'United States'
+			 WHEN TRIM(cntry) = '' THEN 'n/a'
+			 ELSE COALESCE(cntry, 'n/a')
+		END AS cntry
+    FROM bronze.erp_loc_a101;
+    
+    v_end_time := NOW();
+    RAISE NOTICE '>> Load Duration: %', v_end_time - v_start_time;
+
     -- Final Batch Logging
     v_batch_end_time := NOW();
     RAISE NOTICE '==========================================';
